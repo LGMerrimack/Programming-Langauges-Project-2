@@ -19,8 +19,7 @@ package lexer;
 /**
  * An enumeration of token types.
  */
-public enum TokenType
-{
+public enum TokenType {
     /**
      * An integer token.
      */
@@ -154,5 +153,15 @@ public enum TokenType
     /**
      * The end of the file token.
      */
-    EOF
+    EOF,
+
+    /**
+     * The LET keyword.
+     */
+    LET,
+
+    /**
+     * The IN keyword.
+     */
+    IN,
 }

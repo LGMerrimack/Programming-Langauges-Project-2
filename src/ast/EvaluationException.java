@@ -18,16 +18,15 @@ package ast;
 
 /**
  * An exception that represents an evaluation problem.
+ * 
  * @author Zach Kissel
  */
-public class EvaluationException extends Exception
-{
+public class EvaluationException extends Exception {
     /**
-     * The constructor for an evaluation exception that 
+     * The constructor for an evaluation exception that
      * prints the line number and a statement of failure.
      */
-    public EvaluationException()
-    {
+    public EvaluationException() {
         super("Interpretation failed.");
     }
 }

@@ -28,6 +28,8 @@ import ast.nodes.SyntaxNode;
 import ast.nodes.TokenNode;
 import ast.nodes.UnaryOpNode;
 import ast.nodes.ValNode;
+import ast.nodes.LetNode;
+
 import lexer.Lexer;
 import lexer.TokenType;
 import lexer.Token;
@@ -252,53 +254,51 @@ public class MFLParser extends Parser {
   }
 
   /**
-     * Method to evaluate the factor non-terminal (the tightest binding operations). 
-     * @return the subtree resulting from the parse.
-     * @throws ParseException when parsing fails.
-     */
-    private SyntaxNode evalFactor() throws ParseException {
-        trace("Enter <factor>");
-        SyntaxNode fact = null;
+   * Method to evaluate the factor non-terminal (the tightest binding operations).
+   * 
+   * @return the subtree resulting from the parse.
+   * @throws ParseException when parsing fails.
+   */
+  private SyntaxNode evalFactor() throws ParseException {
+    trace("Enter <factor>");
+    SyntaxNode fact = null;
 
-        // Do we have a unary sub (i.e., a negative).
-        if (checkMatch(TokenType.SUB))
-        {
-            SyntaxNode expr = getGoodParse(evalFactor());
-            return new UnaryOpNode(expr, TokenType.SUB, getCurrLine());
-        }
-
-    
-        // Parenthisized expression
-        else if (checkMatch(TokenType.LPAREN)) { 
-            
-            fact = getGoodParse(evalExpr());
-            
-            // Force the right paren.
-            match(TokenType.RPAREN, ")");        
-        } 
-        
-        // Handle the literals.
-        else if (tokenIs(TokenType.INT) || tokenIs(TokenType.REAL) ||
-                   tokenIs(TokenType.TRUE) || tokenIs(TokenType.FALSE)) {
-                fact = new TokenNode(getCurrToken(), getCurrLine());
-                nextToken();        // advance the token stream.
-                return fact;
-        }
-
-        // Handle an identifer.
-        else if (tokenIs(TokenType.ID)) {
-            Token ident = getCurrToken(); // Store off the next token.
-            nextToken();    // advance the token stream.
-
-            // Just a run of the mill token.
-            fact = new TokenNode(ident, getCurrLine());
-
-        }
-            
-        trace("Exit <factor>");
-        return fact;
+    // Do we have a unary sub (i.e., a negative).
+    if (checkMatch(TokenType.SUB)) {
+      SyntaxNode expr = getGoodParse(evalFactor());
+      return new UnaryOpNode(expr, TokenType.SUB, getCurrLine());
     }
 
+    // Parenthisized expression
+    else if (checkMatch(TokenType.LPAREN)) {
+
+      fact = getGoodParse(evalExpr());
+
+      // Force the right paren.
+      match(TokenType.RPAREN, ")");
+    }
+
+    // Handle the literals.
+    else if (tokenIs(TokenType.INT) || tokenIs(TokenType.REAL) ||
+        tokenIs(TokenType.TRUE) || tokenIs(TokenType.FALSE)) {
+      fact = new TokenNode(getCurrToken(), getCurrLine());
+      nextToken(); // advance the token stream.
+      return fact;
+    }
+
+    // Handle an identifer.
+    else if (tokenIs(TokenType.ID)) {
+      Token ident = getCurrToken(); // Store off the next token.
+      nextToken(); // advance the token stream.
+
+      // Just a run of the mill token.
+      fact = new TokenNode(ident, getCurrLine());
+
+    }
+
+    trace("Exit <factor>");
+    return fact;
+  }
 
   /***********
    *
