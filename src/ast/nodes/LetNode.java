@@ -1,32 +1,61 @@
 package ast.nodes;
 
+import ast.EvaluationException;
 import environment.Environment;
+import lexer.Token;
 
 public class LetNode extends SyntaxNode {
 
-    private Token identifier;
+    private Token id;
     private SyntaxNode valueExpr;
     private SyntaxNode bodyExpr;
 
-    public LetNode(Token identifier, SyntaxNode valueExpr, SyntaxNode bodyExpr, int lineNumber) {
-        super(lineNumber);
-        this.identifier = identifier;
+    public LetNode(Token id, SyntaxNode valueExpr, SyntaxNode bodyExpr, int line) {
+        super(line);
+        this.id = id;
         this.valueExpr = valueExpr;
         this.bodyExpr = bodyExpr;
     }
 
-    public Object evaluate(Environment env) {
-        Object value = valueExpr.evaluate(env);
-        Environment localEnv = env.copy();
+    public Token getId() {
+        return id;
+    }
 
-        localEnv.updateEnvironment(identifier, getValue(), value);
+    public SyntaxNode getValueExpr() {
+        return valueExpr;
+    }
 
-        return bodyExpr.evaluate(localEnv);
+    public SyntaxNode getBodyExpr() {
+        return bodyExpr;
+    }
+
+    public String toString() {
+        return "LetNode(" + id.getValue() + ", " + valueExpr.toString() + ", " + bodyExpr.toString() + ")";
+    }
+
+    public void displaySubtree(int indent) {
+        String pad = " ".repeat(indent);
+
+        System.out.println(pad + "LetNode: " + id.getValue());
+
+        System.out.println(pad + " Value Expression:");
+        valueExpr.displaySubtree(indent + 4);
+
+        System.out.println(pad + " Body Expression:");
+        bodyExpr.displaySubtree(indent + 4);
+
     }
 
     @Override
-    public String toString() {
-        return "(let " + identifier.getValue() + " = " + valueExpr + " in " + bodyExpr.toString() + ")";
+    public Object evaluate(Environment env) throws EvaluationException {
+
+        Object value = valueExpr.evaluate(env);
+
+        Environment localEnv = env.copy();
+
+        localEnv.updateEnvironment(id, value);
+
+        return bodyExpr.evaluate(localEnv);
     }
 
 }

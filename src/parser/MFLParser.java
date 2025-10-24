@@ -158,6 +158,17 @@ public class MFLParser extends Parser {
 
     trace("Enter <expr>");
 
+    if (checkMatch(TokenType.LET)) {
+      Token id = getCurrToken();
+      match(TokenType.ID, "identifier");
+      match(TokenType.ASSIGN, ":=");
+      SyntaxNode valueExpr = getGoodParse(evalExpr());
+      match(TokenType.IN, "in");
+      SyntaxNode bodyExpr = getGoodParse(evalExpr());
+      trace("Exit <expr>");
+      return new LetNode(id, valueExpr, bodyExpr, (int) getCurrLine());
+    }
+
     expr = getGoodParse(evalRexpr());
 
     op = getCurrToken().getType(); // Save off the supposed operation.
