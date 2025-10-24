@@ -70,7 +70,90 @@ public final class BinOpNode extends SyntaxNode
      */
     @Override
     public Object evaluate(Environment env) throws EvaluationException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'evaluate'");
-    }
-}
+
+        Object leftVal = leftTerm.evaluate(env);
+        Object rightVal = rightTerm.evaluate(env);
+
+        switch(op){
+
+            case ADD:
+            case SUB:
+            case MULT:
+            case DIV:
+            case MOD:
+                if(!(leftVal instanceof Integer || leftVal instanceof Double || !(rightVal instanceof Integer || rightVal instanceof Double))){
+
+                    logError("Arithmetic operation '" + op + "' requires numeric operands.");
+
+                    throw new EvaluationException();
+
+                }
+
+                double lnum = (leftVal instanceof Integer) ? ((Integer)leftVal).doubleValue() : (Double)leftVal;
+                double rnum = (rightVal instanceof Integer) ? ((Integer)rightVal).doubleValue() : (Double)rightVal;
+
+                switch(op){
+
+                    case ADD:
+                        return (leftVal instanceof Integer && rightVal instanceof Integer) ? (int) (lnum + rnum) : (lnum + rnum);
+
+                    case SUB:
+                        return (leftVal instanceof Integer && rightVal instanceof Integer) ? (int) (lnum - rnum) : (lnum - rnum);
+
+                    case MULT:
+                    return (leftVal instanceof Integer && rightVal instanceof Integer) ? (int) (lnum * rnum) : (lnum * rnum);
+
+                    case DIV: 
+                        if(rnum == 0){
+
+                            logError("Division by zero.");
+
+                            throw new EvaluationException();
+
+                        }
+
+                        int li = (Integer) leftVal;
+                        int ri = (Integer) rightVal;
+
+                        if(ri == 0){
+
+                            logError("Mod by zero.");
+
+                            throw new EvaluationException();
+
+                        }
+
+                        return li % ri;
+
+                    default:
+                        break;
+
+                        }
+
+                        break;
+                    
+                    case AND:
+                    case OR:
+                        if(!(leftVal instanceof Boolean) || !(rightVal instanceof Boolean)){
+
+                            logError("Boolean operatjon '" + op + "' requires Boolean operands.");
+
+                            throw new EvaluationException();
+
+                        }
+
+                        boolean lb = (Boolean) leftVal;
+                        boolean rb = (Boolean) rightVal;
+
+                        return(op == TokenType.AND) ? (lb && rb) : (lb || rb);
+
+                    default:
+                        logError("Unsupported binary operator:" + op);
+                        
+                        throw new EvaluationException();
+
+                }
+
+        return null;
+
+        }
