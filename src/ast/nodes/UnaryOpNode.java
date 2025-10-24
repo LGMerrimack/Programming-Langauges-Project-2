@@ -65,7 +65,45 @@ public final class UnaryOpNode extends SyntaxNode
      */
     @Override
     public Object evaluate(Environment env) throws EvaluationException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'evaluate'");
-    }
+        
+        switch(op){
+
+            case NOT:
+                if(!(value instanceof Boolean)){
+
+                    logError("The 'not' operator requires a Boolean operand.");
+
+                    throw new EvaluationException();
+
+                }
+            return !((Boolean)value);
+    
+        case SUB:
+
+            if(!(value instanceof Integer) && !(value instanceof Double)){
+
+                logError("Unary minus requires a numeric operand.");
+
+                throw new EvaluationException();
+
+            }
+
+            if(value instanceof Integer){
+
+                return -((Integer)value);
+            } else {
+
+                return -((Double)value);
+
+            }
+
+            default:
+
+                logError("Unsupported unary operator: " + op);
+
+                throw new EvaluationException();
+
+            }
+
+        }
 }
