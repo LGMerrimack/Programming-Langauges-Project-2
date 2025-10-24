@@ -66,9 +66,10 @@ public final class ProgNode extends SyntaxNode
     public Object evaluate(Environment env) throws EvaluationException {
         Object result = null;
         
-        
-        for (SyntaxNode expr : exprs)
+        // Evaluate each expression in the list
+        for (SyntaxNode expr : exprs) {
             result = expr.evaluate(env);
+        }
         return result;
     }
 }
